@@ -7,68 +7,77 @@ import { Repository } from 'typeorm';
 import { UnitsCreateDTO } from './units.dto/units.create.dto';
 import { UnitsParamsDTO } from './units.dto/units.params.dto';
 import { UnitsQueryDTO } from './units.dto/units.query.dto';
-import { Units } from './units.entity/units.entity';
+import { Unit } from './units.entity/units.entity';
 
 @Injectable()
 export class UnitsService {
     constructor(
-        @InjectRepository(Units)
-        private units: Repository<Units>
+        @InjectRepository(Unit)
+        private unit: Repository<Unit>
     ) { }
 
-    async spCreateUnit(
-        user: Users,
-        unitsCreateDTO: UnitsCreateDTO
-    ): Promise<Units> {
 
-        let newUnit: Units = await this.units.query(
+    async findOne(
+        id: number
+    ): Promise<Unit> {
+        let unit: Unit = await this.unit.findOne(id);
+        return unit;
+    }
+
+
+    async spCreateUnit(
+        userId: number,
+        unitsCreateDTO: UnitsCreateDTO
+    ): Promise<Unit> {
+
+        let newUnit: Unit = await this.unit.query(
             "CALL sp_create_unit(?,?,?, @status, @message); SELECT @status AS status, @message AS  message",
             [
-                user.id,
+                userId,
                 unitsCreateDTO.name,
                 unitsCreateDTO.description
             ]
         )
 
         ExceptionStoreProcedure.validateEmptyDetail(newUnit);
-        let data: Units = new StoreProcedureResult<Units>().getResultDetail(newUnit);
+        let data: Unit = new StoreProcedureResult<Unit>().getResultDetail(newUnit);
         return data;
     }
 
     async spUpdateUnit(
-        user: Users,
+        userId: number,
         unitsParamsDTO: UnitsParamsDTO,
         unitsCreateDTO: UnitsCreateDTO
-    ): Promise<Units> {
-        let unitUpdated: Units = await this.units.query(
+    ): Promise<Unit> {
+        let unitUpdated: Unit = await this.unit.query(
             "CALL sp_update_unit(?,?,?,?, @status, @message); SELECT @status AS status , @message AS message",
             [
-                user.id,
+                userId,
                 unitsParamsDTO.id,
                 unitsCreateDTO.name,
                 unitsCreateDTO.description
             ]
         )
         ExceptionStoreProcedure.validateEmptyDetail(unitUpdated);
-        let data: Units = new StoreProcedureResult<Units>().getResultDetail(unitUpdated);
+        let data: Unit = new StoreProcedureResult<Unit>().getResultDetail(unitUpdated);
         return data;
     }
 
     async spGetListUnits(
-        user: Users,
+        userId: number,
         unitsQueryDTO: UnitsQueryDTO
-    ): Promise<Units[]> {
-        let units: Units[] = await this.units.query(
+    ): Promise<Unit[]> {
+        let units: Unit[] = await this.unit.query(
             "CALL sp_get_list_units(?,?,?, @status, @message); SELECT @status AS status , @message AS message",
             [
-                user.id,
+                userId,
                 unitsQueryDTO.status,
                 unitsQueryDTO.key_search
             ]
         )
 
         ExceptionStoreProcedure.validate(units);
-        let data: Units[] = new StoreProcedureResult<Units[]>().getResultDetail(units);
+        let data: Unit[] = new StoreProcedureResult<Unit[]>().getResultDetail(units);
         return data;
     }
 }

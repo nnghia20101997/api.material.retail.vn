@@ -1,8 +1,9 @@
-import { IsString } from "class-validator";
+import { IsString, Length } from "class-validator";
+import { IsNotEmptyString } from "src/utils.common/utils.decorator.common/utils.decorator.common";
 
 export class UnitsCreateDTO {
 
-    @IsString()
+    @IsNotEmptyString()
     name: string;
 
     @IsString()

@@ -1,4 +1,4 @@
-import { Materials } from "../materials.entity/material.entity";
+import { Material } from "../materials.entity/material.entity";
 import { UtilsDate } from "src/utils.common/utils.format-time.common/utils.format-time.common";
 
 export class MaterialDetailResponse {
@@ -37,7 +37,7 @@ export class MaterialDetailResponse {
 
     created_at: string;
 
-    constructor(materials?: Materials) {
+    constructor(materials?: Material) {
         this.id = materials ? +materials.id : 0;
 
         this.code = materials ? materials.code : "";
@@ -75,7 +75,7 @@ export class MaterialDetailResponse {
 
     }
 
-    public mapToList(data: Materials[]) {
+    public mapToList(data: Material[]) {
         let response: MaterialDetailResponse[] = [];
         data.forEach((e) => {
             response.push(new MaterialDetailResponse(e));

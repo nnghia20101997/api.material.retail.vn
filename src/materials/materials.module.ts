@@ -3,12 +3,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { jwtConstants } from 'src/auth/constants';
 import { MaterialsController } from './materials.controller';
-import { Materials } from './materials.entity/material.entity';
+import { Material} from './materials.entity/material.entity';
 import { MaterialsService } from './materials.service';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Materials]),
+        TypeOrmModule.forFeature([Material]),
         JwtModule.register({
             secret: jwtConstants.secret,
             signOptions: { expiresIn: '60m' },

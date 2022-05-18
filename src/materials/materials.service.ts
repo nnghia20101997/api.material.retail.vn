@@ -10,24 +10,24 @@ import { MaterialsParamsDTO } from './material.query.dto/materials.params.dto';
 import { MaterialsQueryDTO } from './material.query.dto/materials.query.dto';
 import { MaterialsUpdateDTO } from './material.query.dto/materials.update.dto';
 import { MaterialInventoryResponse } from './material.response/material.inventory.response';
-import { Materials } from './materials.entity/material.entity';
+import { Material } from './materials.entity/material.entity';
 
 @Injectable()
 export class MaterialsService {
     constructor(
-        @InjectRepository(Materials)
-        private materials: Repository<Materials>,
+        @InjectRepository(Material)
+        private material: Repository<Material>,
     ) { }
 
 
     async spGetListMaterials(
         user: Users,
         materialsQueryDTO: MaterialsQueryDTO
-    ): Promise<Materials[]> {
+    ): Promise<Material[]> {
 
         let pagination: Pagination = new Pagination(materialsQueryDTO.page, materialsQueryDTO.limit)
 
-        let materials: Materials[] = await this.materials.query(
+        let materials: Material[] = await this.material.query(
             "CALL sp_get_list_materials(?,?,?,?,?, @status, @message, @totalRecord); SELECT @status AS status, @message AS message, @totalRecord AS total_record",
             [
                 user.id,
@@ -40,7 +40,7 @@ export class MaterialsService {
         console.log("🚀 ~ file: materials.service.ts ~ line 39 ~ MaterialsService ~ materials", materials)
 
         ExceptionStoreProcedure.validate(materials);
-        let data: Materials[] = new StoreProcedureResult<Materials[]>().getResultList(materials);
+        let data: Material[] = new StoreProcedureResult<Material[]>().getResultList(materials);
         return data;
     }
 
@@ -49,7 +49,7 @@ export class MaterialsService {
     ): Promise<MaterialInventoryResponse[]> {
 
 
-        let materials: Materials[] = await this.materials.query(
+        let materials: Material[] = await this.material.query(
             "CALL sp_get_list_material_inventory(?, @status, @message); SELECT @status AS status, @message AS message, @totalRecord AS total_record",
             [
                 user.id,
@@ -57,7 +57,7 @@ export class MaterialsService {
         );
 
         ExceptionStoreProcedure.validate(materials);
-        let data: MaterialInventoryResponse[] = new StoreProcedureResult<Materials[]>().getResultList(materials);
+        let data: MaterialInventoryResponse[] = new StoreProcedureResult<Material[]>().getResultList(materials);
         return data;
     }
 
@@ -65,9 +65,9 @@ export class MaterialsService {
     async spCreateMaterials(
         user: Users,
         materialsCreateDTO: MaterialsCreateDTO
-    ): Promise<Materials> {
+    ): Promise<Material> {
 
-        let newMaterial: Materials = await this.materials.query(
+        let newMaterial: Material = await this.material.query(
             "CALL sp_create_materials(?,?,?,?,?,?,?,?,?,?, @status, @message); SELECT @status AS status, @message AS message",
             [
                 user.id,
@@ -85,17 +85,17 @@ export class MaterialsService {
         )
 
         ExceptionStoreProcedure.validateEmptyDetail(newMaterial);
-        let data: Materials = new StoreProcedureResult<Materials>().getResultDetail(newMaterial);
+        let data: Material = new StoreProcedureResult<Material>().getResultDetail(newMaterial);
         return data;
     }
 
     async spUpdateMaterials(
         user: Users,
         materialsUpdateDTO: MaterialsUpdateDTO
-    ): Promise<Materials> {
+    ): Promise<Material> {
 
 
-        let newMaterial: Materials = await this.materials.query(
+        let newMaterial: Material = await this.material.query(
             "CALL sp_update_materials(?,?,?,?,?,?,?,?,?,?, @status, @message); SELECT @status AS status, @message AS message",
             [
                 user.id,
@@ -114,7 +114,7 @@ export class MaterialsService {
 
 
         ExceptionStoreProcedure.validateEmptyDetail(newMaterial);
-        let data: Materials = new StoreProcedureResult<Materials>().getResultDetail(newMaterial);
+        let data: Material = new StoreProcedureResult<Material>().getResultDetail(newMaterial);
         return data;
     }
 }

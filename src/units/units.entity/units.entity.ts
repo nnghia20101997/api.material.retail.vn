@@ -4,7 +4,7 @@ import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, U
     name: "units"
 })
 
-export class Units extends BaseEntity {
+export class Unit extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

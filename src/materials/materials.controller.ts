@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Res, UseGuards, ValidationPipe, Request, Post, Body, Param, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Query, Res, UseGuards, ValidationPipe, Request, Post, Body, Param, HttpCode, HttpStatus, UsePipes } from '@nestjs/common';
 import { response, Response } from "express";
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Users } from 'src/users/users.entity/users.entity';
@@ -10,7 +10,7 @@ import { MaterialsQueryDTO } from './material.query.dto/materials.query.dto';
 import { MaterialsUpdateDTO } from './material.query.dto/materials.update.dto';
 import { MaterialDetailResponse } from './material.response/material.detail.response';
 import { MaterialInventoryResponse } from './material.response/material.inventory.response';
-import { Materials } from './materials.entity/material.entity';
+import { Material } from './materials.entity/material.entity';
 import { MaterialsService } from './materials.service';
 
 @Controller('/api/materials')
@@ -22,18 +22,15 @@ export class MaterialsController {
 
     @Get("")
     @UseGuards(JwtAuthGuard)
+    @UsePipes(new ValidationPipe({ transform: true }))
     async getList(
         @Query(new ValidationPipe()) materialsQueryDTO: MaterialsQueryDTO,
         @GetUserFromToken() user: Users,
         @Res() res: Response,
     ): Promise<any> {
-
         let response: BaseResponseData = new BaseResponseData();
-
-        let materials: Materials[] = await this.materialsService.spGetListMaterials(user, materialsQueryDTO)
-
+        let materials: Material[] = await this.materialsService.spGetListMaterials(user, materialsQueryDTO)
         response.setData(new MaterialDetailResponse().mapToList(materials))
-
         res.status(HttpStatus.OK).send(response)
     }
 
@@ -43,13 +40,9 @@ export class MaterialsController {
         @GetUserFromToken() user: Users,
         @Res() res: Response,
     ): Promise<any> {
-
         let response: BaseResponseData = new BaseResponseData();
-
         let materialInventory: MaterialInventoryResponse[] = await this.materialsService.spGetListMaterialInventory(user)
-
         response.setData(new MaterialInventoryResponse().mapToList(materialInventory))
-
         res.status(HttpStatus.OK).send(response)
     }
 
@@ -60,18 +53,13 @@ export class MaterialsController {
         @GetUserFromToken() user: Users,
         @Res() res: Response,
     ): Promise<any> {
-
         let response: BaseResponseData = new BaseResponseData();
-
-        let newMaterial: Materials = await this.materialsService.spCreateMaterials(user, materialsCreateDTO)
-
+        let newMaterial: Material = await this.materialsService.spCreateMaterials(user, materialsCreateDTO)
         response.setData(new MaterialDetailResponse(newMaterial))
-
         res.status(HttpStatus.OK).send(response)
     }
 
-
-    @Post("/:id")
+    @Post("/:id/update")
     @UseGuards(JwtAuthGuard)
     async update(
         @Param(new ValidationPipe()) materialsParamsDTO: MaterialsParamsDTO,
@@ -80,15 +68,8 @@ export class MaterialsController {
         @GetUserFromToken() user: Users,
     ): Promise<any> {
         let response: BaseResponseData = new BaseResponseData();
-
-        let materialUpdated: Materials = await this.materialsService.spCreateMaterials(user, materialsUpdateDTO)
-
+        let materialUpdated: Material = await this.materialsService.spCreateMaterials(user, materialsUpdateDTO)
         response.setData(new MaterialDetailResponse(materialUpdated))
-
         return res.status(HttpStatus.OK).send(response);
     }
-
-
-
-
 }

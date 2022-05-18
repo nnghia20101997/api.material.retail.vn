@@ -30,7 +30,7 @@ export class Categories extends BaseEntity {
     sort: number;
 
     @Column({ default: 0 })
-    status: number;
+    status: boolean;
 
     @CreateDateColumn()
     updated_at: Date;

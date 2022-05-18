@@ -4,7 +4,7 @@ import { IsInt } from "src/utils.common/utils.decorator.common/utils.decorator.c
 export class CategoriesQueryDTO {
 
     @IsInt()
-    status: number = 0;
+    status: number = -1;
 
     @IsString()
     key_search: string = "";

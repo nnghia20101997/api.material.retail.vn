@@ -17,17 +17,45 @@ export class CategoriesService {
         private categories: Repository<Categories>,
     ) { }
 
+    /**
+     * 
+     * @param id 
+     * @returns Categories
+     */
+    async findOne(
+        id: number
+    ): Promise<Categories> {
+       let  category: Categories = await this.categories.findOne(id);
+        return category;
+    }
+
+    /**
+     * 
+     * @param category 
+     * @returns Categories
+     */
+    async update(
+        category: Categories
+    ): Promise<Categories> {
+      return  await this.categories.save(category);
+    }
 
 
+    /**
+     * 
+     * @param userId 
+     * @param categoriesCreateDTO 
+     * @returns Categories
+     */
     async spCreateCategories(
-        user: Users,
+        userId: number,
         categoriesCreateDTO: CategoriesCreateDTO
     ): Promise<Categories> {
 
         let newCategories: Categories = await this.categories.query(
             "CALL sp_create_categories(?,?,?, @status, @message); SELECT @status AS status, @message AS  message",
             [
-                user.id,
+                userId,
                 categoriesCreateDTO.name,
                 categoriesCreateDTO.description
             ]
@@ -38,8 +66,15 @@ export class CategoriesService {
     }
 
 
+    /**
+     * 
+     * @param userId 
+     * @param categoriesParamsDTO 
+     * @param categoriesUpdateDTO 
+     * @returns Categories
+     */
     async spUpdateCategories(
-        user: Users,
+        userId: number,
         categoriesParamsDTO: CategoriesParamsDTO,
         categoriesUpdateDTO: CategoriesUpdateDTO
     ): Promise<Categories> {
@@ -47,27 +82,33 @@ export class CategoriesService {
         let categoriesUpdated: Categories = await this.categories.query(
             "CALL sp_update_categories(?,?,?,?, @status, @message); SELECT @status AS status, @message AS  message",
             [
-                user.id,
+                userId,
                 categoriesParamsDTO.id,
                 categoriesUpdateDTO.name,
                 categoriesUpdateDTO.description
             ]
         )
-        console.log("🚀 ~ file: categories.service.ts ~ line 56 ~ CategoriesService ~ categoriesUpdated", categoriesUpdated)
+
         ExceptionStoreProcedure.validateEmptyDetail(categoriesUpdated);
         let data: Categories = new StoreProcedureResult<Categories>().getResultDetail(categoriesUpdated);
         return data;
     }
 
+    /**
+     * 
+     * @param user 
+     * @param categoriesQueryDTO 
+     * @returns Categories[]
+     */
     async spGetListCategories(
-        user: Users,
+        userId: number,
         categoriesQueryDTO: CategoriesQueryDTO
     ): Promise<Categories[]> {
 
         let categories: Categories[] = await this.categories.query(
             "CALL sp_get_list_categories(?,?,?, @status, @message); SELECT @status AS status, @message AS  message",
             [
-                user.id,
+                userId,
                 categoriesQueryDTO.status,
                 categoriesQueryDTO.key_search
             ]
