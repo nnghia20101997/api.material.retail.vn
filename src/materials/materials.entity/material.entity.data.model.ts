@@ -1,11 +1,9 @@
 import { extend } from "lodash";
 import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-@Entity({
-    name: "materials"
-})
+@Entity()
 
-export class Material extends BaseEntity {
+export class MaterialDataModel extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -33,8 +31,14 @@ export class Material extends BaseEntity {
     @Column({ default: 0 })
     category_id: number;
 
+    @Column({ default: '' })
+    category_name: string;
+
     @Column({ default: 0 })
     unit_id: number;
+
+    @Column({ default: '' })
+    unit_name: string;
 
     @Column({ default: 0 })
     wastage_rate: number;

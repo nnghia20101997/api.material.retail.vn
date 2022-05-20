@@ -1,5 +1,5 @@
 import { UtilsDate } from "src/utils.common/utils.format-time.common/utils.format-time.common";
-import { Categories } from "../categories.entity/categories.entity";
+import { Category } from "../categories.entity/categories.entity";
 
 export class CategoriesDetailResponse {
 
@@ -25,7 +25,7 @@ export class CategoriesDetailResponse {
 
     created_at: string;
 
-    constructor(categories?: Categories) {
+    constructor(categories?: Category) {
         this.id = categories ? +categories.id : 0;
         this.user_id = categories ? +categories.user_id : 0;
         this.code = categories ? categories.code : "";
@@ -39,7 +39,7 @@ export class CategoriesDetailResponse {
         this.updated_at = categories ? UtilsDate.formatDateTimeVNToString(categories.updated_at) : "";
     }
 
-    public mapToList(data: Categories[]) {
+    public mapToList(data: Category[]) {
         let response: CategoriesDetailResponse[] = [];
 
         data.forEach(e => {

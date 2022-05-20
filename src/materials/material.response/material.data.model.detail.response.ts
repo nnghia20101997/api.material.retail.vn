@@ -1,7 +1,8 @@
 import { Material } from "../materials.entity/material.entity";
 import { UtilsDate } from "src/utils.common/utils.format-time.common/utils.format-time.common";
+import { MaterialDataModel } from "../materials.entity/material.entity.data.model";
 
-export class MaterialDetailResponse {
+export class MaterialDataModelDetailResponse {
 
     id: number;
 
@@ -21,7 +22,11 @@ export class MaterialDetailResponse {
 
     category_id: number;
 
+    category_name: string;
+
     unit_id: number;
+
+    unit_name: string;
 
     wastage_rate: number;
 
@@ -37,7 +42,7 @@ export class MaterialDetailResponse {
 
     created_at: string;
 
-    constructor(materials?: Material) {
+    constructor(materials?: MaterialDataModel) {
         this.id = materials ? +materials.id : 0;
 
         this.code = materials ? materials.code : "";
@@ -56,7 +61,11 @@ export class MaterialDetailResponse {
 
         this.category_id = materials ? +materials.category_id : 0;
 
+        this.category_name = materials ? materials.category_name : '';
+
         this.unit_id = materials ? +materials.unit_id : 0;
+
+        this.unit_name = materials ? materials.unit_name : '';
 
         this.wastage_rate = materials ? +materials.wastage_rate : 0;
 
@@ -75,10 +84,10 @@ export class MaterialDetailResponse {
 
     }
 
-    public mapToList(data: Material[]) {
-        let response: MaterialDetailResponse[] = [];
+    public mapToList(data: MaterialDataModel[]) {
+        let response: MaterialDataModelDetailResponse[] = [];
         data.forEach((e) => {
-            response.push(new MaterialDetailResponse(e));
+            response.push(new MaterialDataModelDetailResponse(e));
         });
         return response;
     }

@@ -8,13 +8,13 @@ import { CategoriesCreateDTO } from './categories.dto/categories.create.dto';
 import { CategoriesParamsDTO } from './categories.dto/categories.params.dto';
 import { CategoriesQueryDTO } from './categories.dto/categories.query.dto';
 import { CategoriesUpdateDTO } from './categories.dto/categories.update.dto';
-import { Categories } from './categories.entity/categories.entity';
+import { Category } from './categories.entity/categories.entity';
 
 @Injectable()
 export class CategoriesService {
     constructor(
-        @InjectRepository(Categories)
-        private categories: Repository<Categories>,
+        @InjectRepository(Category)
+        private categories: Repository<Category>,
     ) { }
 
     /**
@@ -24,8 +24,8 @@ export class CategoriesService {
      */
     async findOne(
         id: number
-    ): Promise<Categories> {
-       let  category: Categories = await this.categories.findOne(id);
+    ): Promise<Category> {
+       let  category: Category = await this.categories.findOne(id);
         return category;
     }
 
@@ -35,8 +35,8 @@ export class CategoriesService {
      * @returns Categories
      */
     async update(
-        category: Categories
-    ): Promise<Categories> {
+        category: Category
+    ): Promise<Category> {
       return  await this.categories.save(category);
     }
 
@@ -47,13 +47,13 @@ export class CategoriesService {
      * @param categoriesCreateDTO 
      * @returns Categories
      */
-    async spCreateCategories(
+    async spCreateCategory(
         userId: number,
         categoriesCreateDTO: CategoriesCreateDTO
-    ): Promise<Categories> {
+    ): Promise<Category> {
 
-        let newCategories: Categories = await this.categories.query(
-            "CALL sp_create_categories(?,?,?, @status, @message); SELECT @status AS status, @message AS  message",
+        let newCategories: Category = await this.categories.query(
+            "CALL sp_create_category(?,?,?, @status, @message); SELECT @status AS status, @message AS  message",
             [
                 userId,
                 categoriesCreateDTO.name,
@@ -61,7 +61,7 @@ export class CategoriesService {
             ]
         )
         ExceptionStoreProcedure.validateEmptyDetail(newCategories);
-        let data: Categories = new StoreProcedureResult<Categories>().getResultDetail(newCategories);
+        let data: Category = new StoreProcedureResult<Category>().getResultDetail(newCategories);
         return data;
     }
 
@@ -73,14 +73,14 @@ export class CategoriesService {
      * @param categoriesUpdateDTO 
      * @returns Categories
      */
-    async spUpdateCategories(
+    async spUpdateCategory(
         userId: number,
         categoriesParamsDTO: CategoriesParamsDTO,
         categoriesUpdateDTO: CategoriesUpdateDTO
-    ): Promise<Categories> {
+    ): Promise<Category> {
 
-        let categoriesUpdated: Categories = await this.categories.query(
-            "CALL sp_update_categories(?,?,?,?, @status, @message); SELECT @status AS status, @message AS  message",
+        let categoriesUpdated: Category = await this.categories.query(
+            "CALL sp_update_category(?,?,?,?, @status, @message); SELECT @status AS status, @message AS  message",
             [
                 userId,
                 categoriesParamsDTO.id,
@@ -90,7 +90,7 @@ export class CategoriesService {
         )
 
         ExceptionStoreProcedure.validateEmptyDetail(categoriesUpdated);
-        let data: Categories = new StoreProcedureResult<Categories>().getResultDetail(categoriesUpdated);
+        let data: Category = new StoreProcedureResult<Category>().getResultDetail(categoriesUpdated);
         return data;
     }
 
@@ -103,9 +103,9 @@ export class CategoriesService {
     async spGetListCategories(
         userId: number,
         categoriesQueryDTO: CategoriesQueryDTO
-    ): Promise<Categories[]> {
+    ): Promise<Category[]> {
 
-        let categories: Categories[] = await this.categories.query(
+        let categories: Category[] = await this.categories.query(
             "CALL sp_get_list_categories(?,?,?, @status, @message); SELECT @status AS status, @message AS  message",
             [
                 userId,
@@ -114,7 +114,7 @@ export class CategoriesService {
             ]
         )
         ExceptionStoreProcedure.validate(categories);
-        let data: Categories[] = new StoreProcedureResult<Categories[]>().getResultList(categories);
+        let data: Category[] = new StoreProcedureResult<Category[]>().getResultList(categories);
         return data;
     }
 

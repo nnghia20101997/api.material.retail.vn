@@ -1,5 +1,5 @@
 import { Controller, Post, Res, UseGuards, Request, HttpStatus, Get, ValidationPipe, Body, Param, Query, HttpException, UsePipes } from '@nestjs/common';
-import { response, Response } from "express";
+import {  Response } from "express";
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Users } from 'src/users/users.entity/users.entity';
 import { GetUserFromToken } from 'src/utils.common/utils.decorator.common/utils.decorator.common';
@@ -8,9 +8,8 @@ import { BaseResponseData } from 'src/utils.common/utils.response.common/utils.b
 import { CategoriesCreateDTO } from './categories.dto/categories.create.dto';
 import { CategoriesParamsDTO } from './categories.dto/categories.params.dto';
 import { CategoriesQueryDTO } from './categories.dto/categories.query.dto';
-import { CategoriesUpdateStatusDTO } from './categories.dto/categories.update-status.dto';
 import { CategoriesUpdateDTO } from './categories.dto/categories.update.dto';
-import { Categories } from './categories.entity/categories.entity';
+import { Category } from './categories.entity/categories.entity';
 import { CategoriesDetailResponse } from './categories.reponse/categories.detail.response';
 import { CategoriesService } from './categories.service';
 
@@ -26,7 +25,7 @@ export class CategoriesController {
         @Res() res: Response
     ): Promise<any> {
         let response: BaseResponseData = new BaseResponseData();
-        let newCategories: Categories = await this.categoriesService.spCreateCategories(user.id, categoriesCreateDTO)
+        let newCategories: Category = await this.categoriesService.spCreateCategory(user.id, categoriesCreateDTO)
         response.setData(new CategoriesDetailResponse(newCategories))
         return res.status(HttpStatus.OK).send(response);
     }
@@ -40,7 +39,7 @@ export class CategoriesController {
         @Res() res: Response
     ): Promise<any> {
         let response: BaseResponseData = new BaseResponseData();
-        let categoriesUpdated: Categories = await this.categoriesService.spUpdateCategories(user.id, categoriesParamsDTO, categoriesUpdateDTO)
+        let categoriesUpdated: Category = await this.categoriesService.spUpdateCategory(user.id, categoriesParamsDTO, categoriesUpdateDTO)
         response.setData(new CategoriesDetailResponse(categoriesUpdated))
         return res.status(HttpStatus.OK).send(response);
     }
@@ -52,7 +51,7 @@ export class CategoriesController {
         @Res() res: Response
     ): Promise<any> {
         let response: BaseResponseData = new BaseResponseData();
-        let category: Categories = await this.categoriesService.findOne(categoriesParamsDTO.id);
+        let category: Category = await this.categoriesService.findOne(categoriesParamsDTO.id);
         if(!category){
             throw new HttpException(new ExceptionResponseDetail(HttpStatus.BAD_REQUEST, 'Không tồn tại danh mục này!'), HttpStatus.OK);
         }else{
@@ -73,7 +72,7 @@ export class CategoriesController {
         @GetUserFromToken() user: Users,
     ): Promise<any> {
         let response: BaseResponseData = new BaseResponseData();
-        let category: Categories = await this.categoriesService.findOne(categoriesParamsDTO.id);
+        let category: Category = await this.categoriesService.findOne(categoriesParamsDTO.id);
         if(!category){
             throw new HttpException(new ExceptionResponseDetail(HttpStatus.BAD_REQUEST, 'Không tồn tại danh mục này!'), HttpStatus.OK);
         }
@@ -90,7 +89,7 @@ export class CategoriesController {
         @GetUserFromToken() user: Users,
     ): Promise<any> {
         let response: BaseResponseData = new BaseResponseData();
-        let categories: Categories[] = await this.categoriesService.spGetListCategories(user.id, categoriesQueryDTO)
+        let categories: Category[] = await this.categoriesService.spGetListCategories(user.id, categoriesQueryDTO)
         response.setData(new CategoriesDetailResponse().mapToList(categories))
         res.status(HttpStatus.OK).send(response)
     }

@@ -3,14 +3,14 @@ import { IsInt } from "src/utils.common/utils.decorator.common/utils.decorator.c
 
 export class MaterialsQueryDTO {
     @IsInt()
-    status: number = 0;
+    status: number = -1;
 
     @IsString()
     key_search: string = "";
 
     @IsInt()
-    page: number = 0;
+    page: number = 1;
 
     @IsInt()
-    limit: number = 0;
+    limit: number = 20;
 }
